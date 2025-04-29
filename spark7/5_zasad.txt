@@ -1,0 +1,34 @@
+1) Weryfikacja i walidacja danych przed przetworzeniem
+Opis: Zanim dane przejdą do dalszego przetwarzania, należy przeprowadzić ich weryfikację pod kątem poprawności. Walidacja może obejmować sprawdzenie typu danych, wymaganych pól, zakresów wartości oraz ich integralności. Można użyć takich narzędzi jak pydantic (dla Pythona), które automatycznie walidują dane wejściowe zgodnie z określonymi schematami.
+
+Zaleta: Dzięki temu unikniemy niepoprawnych danych w systemie, co pozwala na uniknięcie późniejszych problemów w przetwarzaniu.
+
+Przykład: Jeżeli system oczekuje liczby całkowitej w przedziale 1-100, a dane wejściowe to tekst, system powinien zwrócić błąd.
+
+2) Stosowanie wzorców projektowych, takich jak „Retry logic”
+Opis: W przypadku, gdy operacja może zakończyć się błędem (np. nieudany dostęp do zewnętrznej usługi, problem z zapisem do bazy danych), warto zaimplementować logikę ponawiania prób (retry logic). Przykładowo, jeśli zapis do bazy danych zawiedzie, można spróbować wykonać tę operację ponownie przez określoną liczbę prób. Warto także dodać opóźnienia między próbami (backoff), aby nie przeciążyć systemu.
+
+Zaleta: Minimalizuje ryzyko awarii i zwiększa niezawodność systemu, zwłaszcza w przypadku problemów tymczasowych.
+
+Przykład: Jeśli połączenie z zewnętrznym API zakończy się błędem, próbuj ponownie przez 5 minut, zwiększając stopniowo odstępy między próbami.
+
+3) Używanie wersjonowania danych (Data versioning)
+Opis: W przypadku dużych zbiorów danych, warto zastosować wersjonowanie, aby móc śledzić zmiany w danych w czasie i umożliwić łatwy rollback do poprzednich wersji. Może to obejmować np. zapisywanie danych do plików z unikalnymi nazwami (np. z datą i godziną) lub zapisywanie wersji w bazie danych.
+
+Zaleta: Pozwala na łatwe śledzenie historii danych i szybkie przywrócenie poprzednich wersji w przypadku błędów lub niepożądanych zmian.
+
+Przykład: Jeżeli zapisujemy dane w pliku CSV, każda wersja powinna mieć unikalną nazwę, np. dane_2025-04-29_v1.csv.
+
+4) Bezpieczne zarządzanie dostępem i uprawnieniami
+Opis: W produkcyjnych pipeline’ach często dane przechodzą przez różne systemy i osoby. Ważne jest, aby zarządzać dostępem do tych systemów w sposób bezpieczny, np. poprzez rolę użytkowników, uprawnienia do plików, i szyfrowanie wrażliwych danych. Dobrym rozwiązaniem jest także stosowanie mechanizmów takich jak Identity and Access Management (IAM), które pozwalają na precyzyjne zarządzanie, kto może wykonywać jakie operacje na danych.
+
+Zaleta: Zapewnia bezpieczeństwo danych i zapobiega przypadkowemu lub celowemu usunięciu lub modyfikacji danych przez nieuprawnione osoby.
+
+Przykład: Używanie kluczy API z ograniczonymi uprawnieniami, które pozwalają na tylko odczyt danych lub zapis w określonym zakresie.
+
+5) Zastosowanie tzw. „Circuit Breakera”
+Opis: W produkcyjnych systemach rozproszonych warto używać mechanizmu tzw. "circuit breaker", który monitoruje stan systemu i w przypadku wykrycia problemów z dostępem do zewnętrznych usług (np. API, bazy danych) automatycznie wstrzymuje dalsze próby połączeń i przechodzi w stan „awarii”. Pozwala to na uniknięcie przeciążenia systemu i umożliwia szybkie wykrycie problemu, bez ciągłego obciążania usługi, która już nie działa.
+
+Zaleta: Pozwala na ochronę przed przeciążeniami i awariami zewnętrznych usług, co zwiększa niezawodność całego systemu.
+
+Przykład: Jeśli system nie jest w stanie połączyć się z bazą danych, circuit breaker może automatycznie wstrzymać próby połączenia, aż problem z bazą danych zostanie rozwiązany.
